@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -35,6 +36,36 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
 	}
+
+	_, _ = w.Write(jsonResp)
+}
+
+func (s *Server) getIngredientById(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context())
+	id := params.ByName("id")
+	ingredient, err := s.db.GetIngredientById(id)
+
+	if err != nil {
+		log.Fatalf("error getting ingredient by id. Err: %v", err)
+	}
+
+	jsonResp, err := json.Marshal(ingredient)
+	if err != nil {
+		log.Fatalf("error handling JSON marshal. Err: %v", err)
+	}
+	_, _ = w.Write(jsonResp)
+}
+
+func (s *Server) getIngredientsbyMenuId(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context())
+	id := params.ByName("id")
+
+	ingredients, err := s.db.GetIngredientByMenuId(id)
+	if err != nil {
+		fmt.Println("error getting ingredients by menu id")
+	}
+
+	jsonResp, err := json.Marshal(ingredients)
 
 	_, _ = w.Write(jsonResp)
 }

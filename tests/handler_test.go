@@ -30,3 +30,11 @@ func TestHandler(t *testing.T) {
 		t.Errorf("expected response body to be %v; got %v", expected, string(body))
 	}
 }
+
+func TestGetIngredientById(t *testing.T) {
+	// TODO: Write Test for TestGetIngredientById
+}
+
+func TestGetIngredientsbyMenuId(t *testing.T) {
+	// TODO: Write TestGetIngredientsbyMenuId
+}
