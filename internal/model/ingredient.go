@@ -1,7 +1,7 @@
 package model
 
 type Ingredient struct {
-	_id         string `json:"_id" bson:"_id"`
-	Name        string `json:"name" bson:"name"`
-	Description string `json:"description" bson:"description"`
+	_id         string `bson:"_id"`
+	Name        string `bson:"name"`
+	Description string `bson:"description"`
 }

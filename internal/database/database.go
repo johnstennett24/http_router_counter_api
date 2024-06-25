@@ -19,6 +19,7 @@ type Service interface {
 	Health() map[string]string
 	GetIngredientById(id string) (model.Ingredient, error)
 	GetIngredientByMenuId(id string) ([]model.Ingredient, error)
+	GetIngredients() ([]model.Ingredient, error)
 }
 
 type service struct {
@@ -77,6 +78,25 @@ func (s *service) GetIngredientById(id string) (model.Ingredient, error) {
 	}
 
 	return ingredient, nil
+}
+
+func (s *service) GetIngredients() ([]model.Ingredient, error) {
+	var ingredients []model.Ingredient
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	cursor, err := s.db.Database("test").Collection("ingredients").Find(ctx, bson.M{})
+
+	for cursor.Next(ctx) {
+		var ingredient model.Ingredient
+		err = cursor.Decode(&ingredient)
+		if err != nil {
+			fmt.Printf("error decoding ingredient. Err: %v", err)
+		}
+		ingredients = append(ingredients, ingredient)
+	}
+
+	return ingredients, nil
 }
 
 func (s *service) GetIngredientByMenuId(id string) ([]model.Ingredient, error) {

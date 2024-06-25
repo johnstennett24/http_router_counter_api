@@ -11,24 +11,25 @@ import (
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := httprouter.New()
-	r.HandlerFunc(http.MethodGet, "/", s.HelloWorldHandler)
 
 	r.HandlerFunc(http.MethodGet, "/health", s.healthHandler)
+
+	r.HandlerFunc(http.MethodGet, "/getIngredientById/{id}", s.handleGetIngredientById)
+
+	r.HandlerFunc(http.MethodGet, "/getIngredients", s.handleGetIngredients)
+
+	r.HandlerFunc(http.MethodGet, "/getIngredientsByMenuId/{id}", s.handleGetIngredientsbyMenuId)
 
 	return r
 }
 
-func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
-	resp := make(map[string]string)
-	resp["message"] = "Hello World"
+// TODO: Add Get Employee by Id
 
-	jsonResp, err := json.Marshal(resp)
-	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
-	}
+// TODO: Add Get Store by Id
 
-	_, _ = w.Write(jsonResp)
-}
+// TODO: Add Get menu by Store Id
+
+// TODO: Get Menu Items by Id
 
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, err := json.Marshal(s.db.Health())
@@ -40,7 +41,19 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-func (s *Server) getIngredientById(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleGetIngredients(w http.ResponseWriter, r *http.Request) {
+	ingredients, err := s.db.GetIngredients()
+	if err != nil {
+		log.Fatalf("error getting ingredients. Err: %v", err)
+	}
+	jsonResp, err := json.Marshal(ingredients)
+	if err != nil {
+		log.Fatalf("error handling JSON marshal. Err: %v", err)
+	}
+	_, _ = w.Write(jsonResp)
+}
+
+func (s *Server) handleGetIngredientById(w http.ResponseWriter, r *http.Request) {
 	params := httprouter.ParamsFromContext(r.Context())
 	id := params.ByName("id")
 	ingredient, err := s.db.GetIngredientById(id)
@@ -56,7 +69,7 @@ func (s *Server) getIngredientById(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-func (s *Server) getIngredientsbyMenuId(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleGetIngredientsbyMenuId(w http.ResponseWriter, r *http.Request) {
 	params := httprouter.ParamsFromContext(r.Context())
 	id := params.ByName("id")
 
