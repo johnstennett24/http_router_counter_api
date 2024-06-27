@@ -23,13 +23,60 @@ func (s *Server) RegisterRoutes() http.Handler {
 	return r
 }
 
-// TODO: Add Get Employee by Id
+func (s *Server) handleGetEmployeeById(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context())
+	id := params.ByName("id")
+	employee, err := s.db.GetEmployeeById(id)
 
-// TODO: Add Get Store by Id
+	if err != nil {
+		log.Fatalf("error getting employee by id. Err: %v", err)
+	}
 
-// TODO: Add Get menu by Store Id
+	jsonResp, err := json.Marshal(employee)
+	if err != nil {
+		log.Fatalf("error handling JSON marshal. Err: %v", err)
+	}
+	_, _ = w.Write(jsonResp)
+}
 
-// TODO: Get Menu Items by Id
+func (s *Server) handleGetStoreById(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context())
+	id := params.ByName("id")
+	store, err := s.db.GetStoreById(id)
+
+	if err != nil {
+		log.Fatalf("error getting store by id. Err: %v", err)
+	}
+
+	jsonResp, err := json.Marshal(store)
+	_, _ = w.Write(jsonResp)
+}
+
+func (s *Server) handleGetMenuByStoreId(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context())
+	id := params.ByName("id")
+	menu, err := s.db.GetMenuByStoreId(id)
+
+	if err != nil {
+		log.Fatalf("error getting menu by store id. Err: %v", err)
+	}
+
+	jsonResp, err := json.Marshal(menu)
+	_, _ = w.Write(jsonResp)
+}
+
+func (s *Server) handleGetMenuItemById(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context())
+	id := params.ByName("id")
+	menuItems, err := s.db.GetMenuItemById(id)
+
+	if err != nil {
+		log.Fatalf("error getting menu items by id. Err: %v", err)
+	}
+
+	jsonResp, err := json.Marshal(menuItems)
+	_, _ = w.Write(jsonResp)
+}
 
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, err := json.Marshal(s.db.Health())
