@@ -20,6 +20,14 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.HandlerFunc(http.MethodGet, "/getIngredientsByMenuId/{id}", s.handleGetIngredientsbyMenuId)
 
+	r.HandlerFunc(http.MethodGet, "/getEmployeeById/{id}", s.handleGetEmployeeById)
+
+	r.HandlerFunc(http.MethodGet, "/getStoreById/{id}", s.handleGetStoreById)
+
+	r.HandlerFunc(http.MethodGet, "/getMenuByStoreId/{id}", s.handleGetMenuByStoreId)
+
+	r.HandlerFunc(http.MethodGet, "/getMenuItemById/{id}", s.handleGetMenuItemById)
+
 	return r
 }
 
